@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document Pipeline Analytics</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .badge-tag { background-color: #e9ecef; color: #495057; margin-right: 4px; padding: 5px 8px; border-radius: 4px; font-weight: 500; font-size: 0.85rem; }
+    .metric-card { border-radius: 8px; border: 1px solid #dee2e6; background: #fff; padding: 16px; }
+  </style>
+</head>
+<body class="p-4">
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h2 class="mb-0">📄 Serverless Document Processing Dashboard</h2>
+      <small class="text-muted">GCP Project: <code>{{ project_id }}</code> | Dataset: <code>{{ dataset_id }}.{{ table_id }}</code></small>
+    </div>
+    <a href="/" class="btn btn-outline-primary btn-sm">🔄 Refresh Data</a>
+  </div>
+
+  {% if is_live %}
+    <div class="alert alert-success py-2">{{ status_msg }}</div>
+  {% else %}
+    <div class="alert alert-warning py-2">{{ status_msg }}</div>
+  {% endif %}
+
+  <!-- KPI Metrics -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="metric-card">
+        <div class="text-muted small">Total Documents</div>
+        <h3 class="mb-0">{{ documents|length }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="metric-card">
+        <div class="text-muted small">Total Word Count</div>
+        <h3 class="mb-0">{{ total_words }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="metric-card">
+        <div class="text-muted small">Unique Tags</div>
+        <h3 class="mb-0">{{ all_tags|length }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="metric-card">
+        <div class="text-muted small">Avg Processing Latency</div>
+        <h3 class="mb-0">{{ avg_latency }} ms</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tag Filter Form -->
+  <div class="card mb-4 shadow-sm border-0">
+    <div class="card-body">
+      <form method="GET" action="/" class="row g-3 align-items-center">
+        <div class="col-auto">
+          <label class="form-label fw-bold mb-0">Filter by Tag:</label>
+        </div>
+        <div class="col-auto">
+          <select name="tag" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">-- All Tags --</option>
+            {% for tag in all_tags %}
+              <option value="{{ tag }}" {% if selected_tag == tag %}selected{% endif %}>{{ tag }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {% if selected_tag %}
+          <div class="col-auto">
+            <a href="/" class="btn btn-sm btn-outline-secondary">Clear Filter</a>
+          </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <!-- Documents Table -->
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-white fw-bold">
+      Processed Documents ({{ documents|length }})
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Filename</th>
+            <th>Upload Date</th>
+            <th>Tags</th>
+            <th>Word Count</th>
+            <th>Status</th>
+            <th>Latency (ms)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for doc in documents %}
+            <tr>
+              <td class="fw-semibold"><code>{{ doc.filename }}</code></td>
+              <td class="text-muted small">{{ doc.upload_date }}</td>
+              <td>
+                {% for tag in doc.tags %}
+                  <a href="/?tag={{ tag }}" class="badge-tag text-decoration-none">{{ tag }}</a>
+                {% endfor %}
+              </td>
+              <td>{{ doc.word_count }}</td>
+              <td>
+                {% if doc.status == 'SUCCESS' %}
+                  <span class="badge bg-success">SUCCESS</span>
+                {% elif doc.status == 'SKIPPED' %}
+                  <span class="badge bg-secondary">SKIPPED</span>
+                {% else %}
+                  <span class="badge bg-danger">{{ doc.status }}</span>
+                {% endif %}
+              </td>
+              <td class="text-muted small">{{ doc.processing_time_ms }} ms</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">No documents found matching the filter.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

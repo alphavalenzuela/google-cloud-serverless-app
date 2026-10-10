@@ -61,6 +61,11 @@ A production-grade, event-driven serverless pipeline on Google Cloud that automa
 │   │   └── bq_service.py      # BigQuery idempotent insertion & schema manager
 │   └── utils/
 │       └── logger.py          # Structured JSON logging (GCP Cloud Logging compatible)
+├── dashboard/
+│   ├── app.py                 # Streamlit web dashboard with live BigQuery query & tag filter
+│   ├── flask_app.py           # Alternative lightweight Flask web app
+│   └── templates/
+│       └── index.html         # Responsive Bootstrap UI for Flask app
 ├── terraform/
 │   ├── main.tf                # Provider setup & project data sources
 │   ├── variables.tf           # Configurable infrastructure variables
@@ -140,6 +145,22 @@ python scripts/simulate_event.py --file "contracts/2026/master_service_agreement
 # 3. Simulate an unsupported file (gracefully acknowledged and skipped)
 python scripts/simulate_event.py --file "archive/backup_dump.zip" --content-type "application/zip"
 ```
+
+### 5. Launch the Web Dashboard (Streamlit / Flask)
+
+You can view and filter all processed documents stored in BigQuery in real time.
+
+**Option A: Streamlit (Recommended — Interactive Data Dashboard)**
+```bash
+streamlit run dashboard/app.py
+```
+*(Opens automatically at `http://localhost:8501` with KPI metrics, tag multi-select, and full OCR text inspector)*.
+
+**Option B: Flask (Lightweight Bootstrap Web App)**
+```bash
+python dashboard/flask_app.py
+```
+*(Opens at `http://localhost:8501`)*.
 
 ---
 
