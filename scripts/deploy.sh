@@ -27,6 +27,7 @@ echo "=========================================================="
 # 2. Enable Required GCP APIs
 echo "[+] Enabling required GCP service APIs..."
 gcloud services enable \
+  cloudresourcemanager.googleapis.com \
   iam.googleapis.com \
   run.googleapis.com \
   pubsub.googleapis.com \

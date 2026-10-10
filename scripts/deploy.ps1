@@ -51,6 +51,8 @@ if (-not (Get-Command terraform -ErrorAction SilentlyContinue)) {
 # 2. Enable Required GCP APIs
 Write-Host "[+] Enabling required GCP service APIs..." -ForegroundColor Cyan
 gcloud services enable `
+    cloudresourcemanager.googleapis.com `
+    iam.googleapis.com `
     run.googleapis.com `
     pubsub.googleapis.com `
     storage.googleapis.com `
