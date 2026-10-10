@@ -1,0 +1,16 @@
+# Example configuration variables for Terraform deployment
+# Copy this file to terraform.tfvars and fill in your values:
+
+project_id          = "your-gcp-project-id"
+region              = "us-central1"
+bucket_name         = "your-unique-documents-bucket-name"
+bigquery_dataset_id = "doc_analytics"
+bigquery_table_id   = "processed_documents"
+bigquery_location   = "US"
+
+# Specify your built image in Google Artifact Registry:
+# e.g. us-central1-docker.pkg.dev/your-gcp-project-id/doc-pipeline/doc-processor:v1.0.0
+container_image     = "gcr.io/your-gcp-project-id/doc-processor:latest"
+
+ocr_engine          = "simulated"  # or "vision_api"
+max_instances       = 10
