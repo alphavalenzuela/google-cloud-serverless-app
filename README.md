@@ -79,6 +79,7 @@ A production-grade, event-driven serverless pipeline on Google Cloud that automa
 │   ├── test_bq.py             # BigQuery deduplication & service tests
 │   └── test_gcs.py            # GCS service mock download tests
 ├── scripts/
+│   ├── test_pipeline.sh       # Live end-to-end verification script against real GCP resources
 │   ├── simulate_event.py      # Local CLI to test the pipeline with synthetic events
 │   └── deploy.sh              # Cloud Build & Terraform deployment automation script
 ├── Dockerfile                 # Multi-stage non-root Python 3.11 container
