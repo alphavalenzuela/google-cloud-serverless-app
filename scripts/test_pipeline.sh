@@ -7,7 +7,17 @@ set -euo pipefail
 
 PROJECT_ID="${PROJECT_ID:-serverless-application-511208}"
 REGION="${REGION:-us-central1}"
-BUCKET_NAME="${BUCKET_NAME:-${PROJECT_ID}-raw-docs}"
+
+# Dynamically discover the bucket from Terraform output or gcloud list
+if [ -z "${BUCKET_NAME:-}" ]; then
+  BUCKET_NAME=$(gcloud storage buckets list --project="${PROJECT_ID}" --format="value(name)" 2>/dev/null | grep -E "raw-document|raw-doc" | head -n 1 || echo "")
+fi
+
+# Fallback if discovery is empty
+if [ -z "${BUCKET_NAME}" ]; then
+  BUCKET_NAME="${PROJECT_ID}-raw-documents"
+fi
+
 DATASET_ID="doc_analytics"
 TABLE_ID="processed_documents"
 
